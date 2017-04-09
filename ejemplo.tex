@@ -1,0 +1,57 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{latexsym}
+\usepackage{lastpage}
+\usepackage{aed2-symb,aed2-itef,aed2-tad}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage[tight]{subfigure}
+\usepackage{aed2-itef}
+\usepackage{framed}
+
+\FrameSep=3pt
+
+%\renewenvironment{incisos}
+%{
+%	\par\medskip
+%	\begin{enumerate}[a)]\itemsep=-\parsep
+%} {
+%	\end{enumerate}
+%	\par\medskip
+%}
+
+
+\begin{document}
+
+\begin{framed}
+\small
+\begin{tad}{\tadNombre{}}
+
+\tadGeneros{}
+
+\tadObservadores
+
+\begin{framed}
+    \begin{itemize}
+        \item Gen1: Descripci\'on Gen1
+        \item Gen2: Descripci\'on Gen2
+    \end{itemize}
+\end{framed}
+
+\tadGeneradores
+    \settominwidth{\tadAnchoNombreFunciones}{Gen1}
+    \tadOperacion{Gen1}{}{}{}
+    \tadOperacion{Gen2}{}{}{}
+
+\end{tad}
+\smallskip
+\end{framed}
+
+\end{document}

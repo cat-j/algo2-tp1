@@ -148,7 +148,16 @@ cont($c,t$) FI}
 \tadOperacion{tieneFichasEnAlg\'unCasillero?}{jugador/j,nat/n,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
 \tadOperacion{jugadoresActivos}{partida,nat}{conj(jugador)}{}
 \tadOperacion{terminada?}{partida}{bool}{}
-\tadOperacion{algunoComplet\'oLaMisi\'on?}{partida,nat}{bool}{}
+\tadOperacion{algunoComplet\'oLaMisi\'on?}{nat,partida}{bool}{}
+\tadOperacion{complet\'oLaMisi\'on?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{cu\'antosLeFaltan}{jugador/j,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{contarNoDominadosHasta}{jugador/j,nat,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{est\'aDominado?}{casillero/c,partida/p}{bool}{$c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{jugadoresEnCasillero}{casillero/c,partida/p}{conj(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{dominadoPor}{jugador/j,casillero/c,partida/p}{bool}{$j \leq \text{\#jugadores($p$)} \land c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{ganador}{partida}{jugador}{terminada?($p$)}
+\tadOperacion{maxiFourcade}{nat,partida}{jugador}{terminada?($p$)}
+\tadOperacion{dameDisputados}{nat,partida}{jugador}{terminada?($p$)}
 
 \tadAxiomas[\paratodo{partida}{p}]
 %\tadAlinearAxiomas{pred(suc($n$))}
@@ -170,6 +179,10 @@ cont($c,t$) FI}
 \tadAxioma{misi\'on($j,$agregarFicha($j,c,p$))}{misi\'on($j,p$)}
 \tadAxioma{misi\'on($j,$mover($j,m,n,p$))}{misi\'on($j,p$)}
 
+\tadAxioma{fichasPuestas($j,$crearPartida($t,js,cs,ks$))}{1}
+\tadAxioma{fichasPuestas($j,$agregarFicha($\tilde{j},c,p$))}{fichasPuestas($j,p$) + (\IF $j=\tilde{j}$ THEN $1$ ELSE $0$ FI)}
+\tadAxioma{fichasPuestas($j,$mover($t,js,cs,ks$))}{fichasPuestas($j,p$)}
+
 \tadAxioma{est\'aActivo?($j$)}{tieneFichasEnAlg\'unCasillero($j$,\#casilleros(tablero($p$)),$p$)}
 
 \tadAxioma{tieneFichasEnAlg\'unCasillero($j,n,p$)}{\IF $n = 0$ THEN false ELSE $0<\text{fichasEnCasillero($j,n,p$)} \lor$ \\ tieneFichasEnAlg\'unCasillero($j,n-1,p$) FI}
@@ -182,9 +195,29 @@ cont($c,t$) FI}
 
 \tadAxioma{losEliminados($p,n$)}{\IF $n = 0$ THEN $\emptyset$ ELSE {\IF $\neg$ est\'aActivo?($n,p$) THEN Ag($n,$losEliminados($p,n-1$)) ELSE losEliminados($p,n-1$) FI} FI}
 
-//culo
+\tadAxioma{terminada?($p$)}{\#(jugadoresActivos($p$))$=1 \lor \text{algunoComplet\'oLaMisi\'on?(\#jugadores($p$),$p$)}$}
 
-\tadAxioma{terminada?($p$)}{\#(jugadoresActivos($p$))$=1 \lor \text{algunoComplet\'oLaMisi\'on?($p,$\#jugadores($p$))}$}
+\tadAxioma{algunoComplet\'oLaMisi\'on?($n,p$)}{\IF $n=0$ THEN false ELSE complet\'oLaMisi\'on?($n,p$) $\lor$ algunoComplet\'oLaMisi\'on?($n-1,p$) FI}
+
+\tadAxioma{complet\'oLaMisi\'on?($j,p$)}{cu\'antosLeFaltan($j,p$) $=0$}
+
+\tadAxioma{cu\'antosLeFaltan($j,p$)}{contarNoDominadosHasta($j,$\#casilleros(tablero($p$)),$p$)}
+
+\tadAxioma{contarNoDominadosHasta($j,n,p$)}{\IF $\neg$ dominadoPor($j,n,p$) $\land$ cont($n,$tablero($p$)) = misi\'on($j,p$) THEN suc(contarNoDominadosHasta($j,n-1,p$)) ELSE contarNoDominadosHasta($j,n-1,p$) FI}
+
+\tadAxioma{dominadoPor($j,n,p$)}{est\'aDominado?($c,p$) $\land j \in \text{jugadoresEnCasillero($c,p$)}$}
+
+\tadAxioma{est\'aDominado?($c,p$)}{\#(jugadoresEnCasillero($c,p$)) $=1$}
+
+\tadAxioma{jugadoresEnCasillero($c,p$)}{aConj(fichasEnCasillero($c,p$))}
+
+\tadAxioma{ganador($p$)}{maxiFourcade(\#jugadores($p$),$p$)}
+
+\begin{flushright}
+\textit{//La funci\'on maxiFourcade te devuelve al m\'as ganador de todos. Si no lo conoc\'es, googlealo.}
+\end{flushright}
+\tadAxioma{maxiFourcade($n,p$)}{\IF $n=1 \ or $ complet\'oLaMisi\'on?($n,p$) THEN $n$ ELSE maxiFourcade($n-1,p$) FI}
+
 
 \end{tad}
 

@@ -62,7 +62,7 @@
 \tadGeneros{tablero}
 \tadExporta{bool, generadores, $\neg$, $\lor$, $\land$, $\implies$, $\oluego$, $\yluego$, $\impluego$}
 
-\tadIgualdadObservacional{t}{t'}{tablero}{$(\text{\#}casilleros(t) \igobs \text{\#}casilleros(t'))\ \yluego$\\ $(\forall(c,c':nat)) c,c' \leq \text{\#}casilleros(t) \impluego$\\$ (cont(c,t) \igobs cont(c,t') \land $\\$ movsDeA(c,c',t) \igobs movsDeA(c,c',t') ))$}
+\tadIgualdadObservacional{t}{t'}{tablero}{$(\text{\#}casilleros(t) \igobs \text{\#}casilleros(t'))\ \yluego$\\ $(\forall(c,c':nat)) c,c' \leq \text{\#}casilleros(t) \impluego$\\$ (cont(c,t) \igobs cont(c,t') \land $\\$ movsDesdeHasta(c,c',t) \igobs movsDesdeHasta(c,c',t') ))$}
 %\tadAlinearFunciones{\argumento = 0?}{nat/$n$,nat/$m$}
 \tadGeneradores
 
@@ -73,12 +73,14 @@
 
 \tadObservadores
 \tadOperacion{\text{\#}casilleros}{tablero}{nat}{}
-\tadOperacion{cont}{casillero/c,tab/t}{continente}{$c \leq \text{\#}casilleros(t)$}
-\tadOperacion{movsDeA}{casillero/c,casillero/c',tab/t}{conj(mov)}{$c, c' \leq \text{\#}casilleros(t)$}
+\tadOperacion{cont}{casillero/c,tab/t}{continente}{$c \leq \text{\#casilleros(t)}$}
+\tadOperacion{movsDesdeHasta}{casillero/c,casillero/c',tab/t}{conj(mov)}{$c, c' \leq \text{\#casilleros(t)}$}
 
 \tadOtrasOperaciones
-\tadOperacion{todosLosMovs}{casillero/c,tab/t}{conj(mov)}{$c \leq \text{\#}casilleros(t)$}
-\tadOperacion{conectados?}{casillero/c,casillero/c',tab/t}{bool}{$c, c' \leq \text{\#}casilleros(t)$}
+\tadOperacion{todosLosMovs}{casillero/c,tab/t}{conj(mov)}{$c \leq \text{\#casilleros(t)}$}
+\tadOperacion{conectados?}{casillero/c,casillero/c',tab/t}{bool}{$c, c' \leq \text{\#casilleros(t)}$}
+\tadOperacion{casillConMovMHastaC}{casillero/c,movimiento/m,tab/t}{conj(casillero)}{$c \leq \text{\#casilleros(t)}$}
+\tadOperacion{casillConMovMHastaCRecursi\'on}{casillero/c,movimiento/m,nat/n,tab/t}{conj(casillero)}{$c \leq \text{\#casilleros(t)}$}
 
 \tadAxiomas[\paratodo{tablero}{t,t'}]
 
@@ -95,10 +97,21 @@ cont($c,t$) FI}
 \tadAxioma{cont($c$,conectar($\tilde{c},\tilde{c}',m,m',t$))}{cont($c,t$)}
 \tadAxioma{cont($c$,agregarFlecha($\tilde{c},\tilde{c}',m,t$))}{cont($c,t$)}
 
-\tadAxioma{movsDeA($c,c',$crearTablero($k,k',m,m'$))}{\IF $c=1 \land c'=2$ THEN $\{m\}$ ELSE {\IF $c=2 \land c'=1$ THEN $\{m'\}$ ELSE $\emptyset$ FI } FI}
-\tadAxioma{movsDeA($c,c',\text{agregarCasillero($\tilde{c},k,m,m',t$)}$)}{\IF $c = \text{suc(\#casilleros($t$))}$ THEN {\IF $c' = \tilde{c}$ THEN $\{m\}$ ELSE $\emptyset$ FI} ELSE {\IF $c = \tilde{c} \land c' = \text{suc(\#casilleros($t$))} $ THEN $\{m'\}$ ELSE $\text{movsDeA($c,c',t$)}$ FI} FI}
-\tadAxioma{movsDeA($c,c',\text{conectar($\tilde{c},\tilde{c}',m,m',t$)}$)}{\IF $c = \tilde{c} \land c' = \tilde{c}' $ THEN $\{m\} \cup \text{movsDeA($c,c',t$)}$ ELSE {\IF $c = \tilde{c}' \land c' = \tilde{c} $ THEN $\{m'\} \cup \text{movsDeA($c,c',t$)}$ ELSE $\text{movsDeA($c,c',t$)}$ FI} FI}
-\tadAxioma{movsDeA($c,c',\text{agregarFlecha($\tilde{c},\tilde{c}',m,t$)}$)}{\IF $c = \tilde{c} \land c'=\tilde{c}'$ THEN $\{m\} \cup \text{movsDeA($c,c',t$)}$ ELSE $\text{movsDeA($c,c',t$)}$ FI}
+\tadAxioma{movsDesdeHasta($c,c',$crearTablero($k,k',m,m'$))}{\IF $c=1 \land c'=2$ THEN $\{m\}$ ELSE {\IF $c=2 \land c'=1$ THEN $\{m'\}$ ELSE $\emptyset$ FI } FI}
+\tadAxioma{movsDesdeHasta($c,c',\text{agregarCasillero($\tilde{c},k,m,m',t$)}$)}{\IF $c = \text{suc(\#casilleros($t$))}$ THEN {\IF $c' = \tilde{c}$ THEN $\{m\}$ ELSE $\emptyset$ FI} ELSE {\IF $c = \tilde{c} \land c' = \text{suc(\#casilleros($t$))} $ THEN $\{m'\}$ ELSE $\text{movsDesdeHasta($c,c',t$)}$ FI} FI}
+\tadAxioma{movsDesdeHasta($c,c',\text{conectar($\tilde{c},\tilde{c}',m,m',t$)}$)}{\IF $c = \tilde{c} \land c' = \tilde{c}' $ THEN $\{m\} \cup \text{movsDesdeHasta($c,c',t$)}$ ELSE {\IF $c = \tilde{c}' \land c' = \tilde{c} $ THEN $\{m'\} \cup \text{movsDesdeHasta($c,c',t$)}$ ELSE $\text{movsDesdeHasta($c,c',t$)}$ FI} FI}
+\tadAxioma{movsDesdeHasta($c,c',\text{agregarFlecha($\tilde{c},\tilde{c}',m,t$)}$)}{\IF $c = \tilde{c} \land c'=\tilde{c}'$ THEN $\{m\} \cup \text{movsDesdeHasta($c,c',t$)}$ ELSE $\text{movsDesdeHasta($c,c',t$)}$ FI}
+
+\tadAxioma{todosLosMovs($c$,crearTablero($k,k',m,m'$))}{\IF $c=1$ THEN $\{m\}$ ELSE $\{m'\}$ FI}
+\tadAxioma{todosLosMovs($c$,agregarCasillero($\tilde{c},k,m,m',t$))}{\IF $c=\text{suc(\#casilleros($t$))}$ THEN $\{m\}$ ELSE {\IF $c=\tilde{c}$ THEN $\{m'\} \cup \text{todosLosMovs($c,t$)}$ ELSE $\text{todosLosMovs($c,t$)}$ FI} FI}
+\tadAxioma{todosLosMovs($c,$conectar($\tilde{c},\tilde{c}',m,m',t$))}{\IF $c=\tilde{c}$ THEN $\{m\} \cup \text{todosLosMovs($c,t$)}$ ELSE {\IF $c=\tilde{c}'$ THEN $\{m'\} \cup \text{todosLosMovs($c,t$)}$ ELSE $\text{todosLosMovs($c,t$)}$ FI} FI}
+\tadAxioma{todosLosMovs($c,$agregarFlecha($\tilde{c},\tilde{c}',m,t$))}{\IF $c=\tilde{c}$ THEN $\{m\} \cup \text{todosLosMovs($c,t$)}$ ELSE $\text{todosLosMovs($c,t$)}$ FI}
+
+\tadAxioma{conectados?($c,c',t$)}{$\neg \emptyset ? \text{(movsDesdeHasta($c,c',t$))}$}
+
+\tadAxioma{casillConMovMHastaC($m,c,t$)}{casillConMovMHastaCRecursi\'on($m,c,$\#casilleros($t$),$t$)}
+
+\tadAxioma{casillConMovMHastaCRecursi\'on($m,c,n,t$)}{\IF $m \in \text{movsDesdeHasta($n,c,t$)}$ THEN $\{n\} \cup \text{movsDesdeHasta($n-1,c,t$)}$ ELSE $\text{movsDesdeHasta($n-1,c,t$)}$ FI}
 
 
 \end{tad}
@@ -128,6 +141,7 @@ cont($c,t$) FI}
 
 \tadOtrasOperaciones
 
+\tadOperacion{fichasVecinasDeJ}{casillero/c,jugador/j,movimiento/m,partida/p}{multiconj(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
 \tadOperacion{est\'aActivo?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
 \tadOperacion{jugadoresActivos}{partida}{conj(jugador)}{}
 \tadOperacion{jugadoresEliminados}{partida}{conj(jugador)}{}
@@ -145,6 +159,12 @@ cont($c,t$) FI}
 \tadAxioma{\#jugadores(crearPartida($t,js,cs,ks$))}{$js$}
 \tadAxioma{\#jugadores(agregarFicha($j,c,p$))}{$\text{\#jugadores($p$)}$}
 \tadAxioma{\#jugadores(mover($j,m,n,p$))}{$\text{\#jugadores($p$)}$}
+
+\tadAxioma{fichasEnCasillero($c,$ crearPartida($t,js,cs,ks$))}{\IF est\'a?($c,cs$) THEN $\{ \text{suc(posici\'on($c,cs$))} \}$ ELSE $\emptyset$ FI}
+\tadAxioma{fichasEnCasillero($c,$ agregarFicha($j,\tilde{c},p$))}{fichasEnCasillero($c,p$) $\cup$ (\IF $c=\tilde{c}$ THEN $\{j\}$ ELSE $\emptyset$ FI)}
+\tadAxioma{fichasEnCasillero($c,$ mover($j,m,n,p$))}{\IF dominado?($c,p$) THEN {\IF $j \in \text{fichasEnCasillero(c,p)} \land m \in \text{todosLosMovs($c$,tablero($p$))}$ THEN (fichasEnCasillero($c,p$) - agNVeces($j,n,\emptyset$)) $\cup$ \\ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} ELSE {\IF $\neg \emptyset$?(fichasEnCasillero($c,p$)) THEN sinUno(fichasEnCasillero($c,p$)) $\cup$ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} FI}
+
+\tadAxioma{fichasVecinasDeJ($c,j,m,p$)}{\IF THEN ELSE FI}
 
 \tadAxioma{misi\'on($j,$crearPartida($t,js,cs,ks$))}{$ks[j-1]$}
 \tadAxioma{misi\'on($j,$agregarFicha($j,c,p$))}{misi\'on($j,p$)}

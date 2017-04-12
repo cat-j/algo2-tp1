@@ -141,26 +141,37 @@ cont($c,t$) FI}
 
 \tadOtrasOperaciones
 
-\tadOperacion{fichasVecinasDeJ}{casillero/c,jugador/j,movimiento/m,partida/p}{multiconj(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{est\'aActivo?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
+\textbf{Funciones requeridas por la empresa}
 \tadOperacion{jugadoresActivos}{partida}{conj(jugador)}{}
 \tadOperacion{jugadoresEliminados}{partida}{conj(jugador)}{}
-\tadOperacion{tieneFichasEnAlg\'unCasillero?}{jugador/j,nat/n,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
-\tadOperacion{jugadoresActivos}{partida,nat}{conj(jugador)}{}
 \tadOperacion{terminada?}{partida}{bool}{}
+\tadOperacion{ganador}{partida}{jugador}{terminada?($p$)}
+\tadOperacion{casillerosDominados}{partida}{conj(tupla(casillero,conj(jugador)))}{}
+\tadOperacion{casillerosDisputados}{partida}{conj(tupla(casillero,conj(jugador)))}{}
+\tadOperacion{casillerosVac\'ios}{partida}{conj(casillero)}{}
+
+\textbf{Funciones auxiliares}
+\tadOperacion{fichasVecinasDeJ}{casillero/c,jugador/j,movimiento/m,partida/p}{multiconj(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{est\'aActivo?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{tieneFichasEnAlg\'unCasillero?}{jugador/j,nat/n,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{dameActivos}{partida,nat}{conj(jugador)}{}
+\tadOperacion{dameEliminados}{partida,nat}{conj(jugador)}{}
 \tadOperacion{algunoComplet\'oLaMisi\'on?}{nat,partida}{bool}{}
 \tadOperacion{complet\'oLaMisi\'on?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
 \tadOperacion{cu\'antosLeFaltan}{jugador/j,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
 \tadOperacion{contarNoDominadosHasta}{jugador/j,nat,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
 \tadOperacion{est\'aDominado?}{casillero/c,partida/p}{bool}{$c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{est\'aDisputado?}{casillero/c,partida/p}{bool}{$c \leq \text{\#casilleros(tablero($p$))}$}
 \tadOperacion{jugadoresEnCasillero}{casillero/c,partida/p}{conj(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
 \tadOperacion{dominadoPor}{jugador/j,casillero/c,partida/p}{bool}{$j \leq \text{\#jugadores($p$)} \land c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{ganador}{partida}{jugador}{terminada?($p$)}
+\tadOperacion{dameDominados}{nat,partida}{conj(casillero)}{}
+\tadOperacion{dameDisputados}{nat,partida}{conj(casillero)}{}
+\tadOperacion{dameVac\'ios}{nat,partida}{conj(casillero)}{}
 \tadOperacion{maxiFourcade}{nat,partida}{jugador}{terminada?($p$)}
-\tadOperacion{dameDisputados}{nat,partida}{jugador}{terminada?($p$)}
 
 \tadAxiomas[\paratodo{partida}{p}]
 %\tadAlinearAxiomas{pred(suc($n$))}
+\textbf{Observadores}
 \tadAxioma{tablero(crearPartida($t,js,cs,ks$))}{$t$}
 \tadAxioma{tablero(agregarFicha($j,c,p$))}{tablero($p$)}
 \tadAxioma{tablero(mover($j,m,n,p$))}{tablero($p$)}
@@ -173,8 +184,6 @@ cont($c,t$) FI}
 \tadAxioma{fichasEnCasillero($c,$ agregarFicha($j,\tilde{c},p$))}{fichasEnCasillero($c,p$) $\cup$ (\IF $c=\tilde{c}$ THEN $\{j\}$ ELSE $\emptyset$ FI)}
 \tadAxioma{fichasEnCasillero($c,$ mover($j,m,n,p$))}{\IF dominado?($c,p$) THEN {\IF $j \in \text{fichasEnCasillero(c,p)} \land m \in \text{todosLosMovs($c$,tablero($p$))}$ THEN (fichasEnCasillero($c,p$) - agNVeces($j,n,\emptyset$)) $\cup$ \\ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} ELSE {\IF $\neg \emptyset$?(fichasEnCasillero($c,p$)) THEN sinUno(fichasEnCasillero($c,p$)) $\cup$ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} FI}
 
-\tadAxioma{fichasVecinasDeJ($c,j,m,p$)}{\IF THEN ELSE FI}
-
 \tadAxioma{misi\'on($j,$crearPartida($t,js,cs,ks$))}{$ks[j-1]$}
 \tadAxioma{misi\'on($j,$agregarFicha($j,c,p$))}{misi\'on($j,p$)}
 \tadAxioma{misi\'on($j,$mover($j,m,n,p$))}{misi\'on($j,p$)}
@@ -183,19 +192,32 @@ cont($c,t$) FI}
 \tadAxioma{fichasPuestas($j,$agregarFicha($\tilde{j},c,p$))}{fichasPuestas($j,p$) + (\IF $j=\tilde{j}$ THEN $1$ ELSE $0$ FI)}
 \tadAxioma{fichasPuestas($j,$mover($t,js,cs,ks$))}{fichasPuestas($j,p$)}
 
+\textbf{Funciones requeridas por la empresa}
+
+\tadAxioma{jugadoresActivos($p$)}{dameActivos($p,$\#jugadores($p$))}
+
+\tadAxioma{jugadoresEliminados($p$)}{dameEliminados($p,$\#jugadores($p$))}
+
+\tadAxioma{terminada?($p$)}{\#(jugadoresActivos($p$))$=1 \lor \text{algunoComplet\'oLaMisi\'on?(\#jugadores($p$),$p$)}$}
+
+\tadAxioma{ganador($p$)}{maxiFourcade(\#jugadores($p$),$p$)}
+
+\tadAxioma{casillerosDominados($p$)}{dameDominados(\#casilleros(tablero($p$)),$p$)}
+
+\tadAxioma{casillerosDisputados($p$)}{dameDisputados(\#casilleros(tablero($p$)),$p$)}
+\tadAxioma{casillerosVac\'ios($p$)}{dameVac\'ios(\#casilleros(tablero($p$)),$p$)}
+
+\textbf{Funciones auxiliares}
+
+\tadAxioma{fichasVecinasDeJ($c,j,m,p$)}{\IF THEN ELSE FI}
+
 \tadAxioma{est\'aActivo?($j$)}{tieneFichasEnAlg\'unCasillero($j$,\#casilleros(tablero($p$)),$p$)}
 
 \tadAxioma{tieneFichasEnAlg\'unCasillero($j,n,p$)}{\IF $n = 0$ THEN false ELSE $0<\text{fichasEnCasillero($j,n,p$)} \lor$ \\ tieneFichasEnAlg\'unCasillero($j,n-1,p$) FI}
 
-\tadAxioma{jugadoresActivos($p$)}{losActivos($p,$\#jugadores($p$))}
+\tadAxioma{dameActivos($p,n$)}{\IF $n = 0$ THEN $\emptyset$ ELSE {\IF est\'aActivo?($n,p$) THEN Ag($n,$dameActivos($p,n-1$)) ELSE dameActivos($p,n-1$) FI} FI}
 
-\tadAxioma{losActivos($p,n$)}{\IF $n = 0$ THEN $\emptyset$ ELSE {\IF est\'aActivo?($n,p$) THEN Ag($n,$losActivos($p,n-1$)) ELSE losActivos($p,n-1$) FI} FI}
-
-\tadAxioma{jugadoresEliminados($p$)}{losEliminados($p,$\#jugadores($p$))}
-
-\tadAxioma{losEliminados($p,n$)}{\IF $n = 0$ THEN $\emptyset$ ELSE {\IF $\neg$ est\'aActivo?($n,p$) THEN Ag($n,$losEliminados($p,n-1$)) ELSE losEliminados($p,n-1$) FI} FI}
-
-\tadAxioma{terminada?($p$)}{\#(jugadoresActivos($p$))$=1 \lor \text{algunoComplet\'oLaMisi\'on?(\#jugadores($p$),$p$)}$}
+\tadAxioma{dameEliminados($p,n$)}{\IF $n = 0$ THEN $\emptyset$ ELSE {\IF $\neg$ est\'aActivo?($n,p$) THEN Ag($n,$dameEliminados($p,n-1$)) ELSE dameEliminados($p,n-1$) FI} FI}
 
 \tadAxioma{algunoComplet\'oLaMisi\'on?($n,p$)}{\IF $n=0$ THEN false ELSE complet\'oLaMisi\'on?($n,p$) $\lor$ algunoComplet\'oLaMisi\'on?($n-1,p$) FI}
 
@@ -209,9 +231,16 @@ cont($c,t$) FI}
 
 \tadAxioma{est\'aDominado?($c,p$)}{\#(jugadoresEnCasillero($c,p$)) $=1$}
 
+\tadAxioma{est\'aDisputado?($c,p$)}{\#(jugadoresEnCasillero($c,p$)) $>1$}
+
 \tadAxioma{jugadoresEnCasillero($c,p$)}{aConj(fichasEnCasillero($c,p$))}
 
-\tadAxioma{ganador($p$)}{maxiFourcade(\#jugadores($p$),$p$)}
+\tadAxioma{dameDominados($n,p$)}{\IF $n=0$ THEN $\emptyset$ ELSE {\IF est\'aDominado?(n,p) THEN $\{ \langle n, \text{jugadoresEnCasillero($n,p$)} \rangle \} \cup $ dameDominados($n-1,p$) ELSE dameDominados($n-1,p$) FI} FI}
+
+\tadAxioma{dameDisputados($n,p$)}{\IF $n=0$ THEN $\emptyset$ ELSE {\IF est\'aDisputado?(n,p) THEN $\{ \langle n, \text{jugadoresEnCasillero($n,p$)} \rangle \} \cup $ dameDisputados($n-1,p$) ELSE dameDisputados($n-1,p$) FI} FI}
+
+\tadAxioma{dameVac\'ios($n,p$)}{\IF $n=0$ THEN $\emptyset$ ELSE {\IF $\emptyset$?(jugadoresEnCasillero($n,p$)) THEN $\{n\} \cup $ dameVac\'ios($n-1,p$) ELSE dameVac\'ios($n-1,p$) FI} FI}
+
 
 \begin{flushright}
 \textit{//La funci\'on maxiFourcade te devuelve al m\'as ganador de todos. Si no lo conoc\'es, googlealo.}

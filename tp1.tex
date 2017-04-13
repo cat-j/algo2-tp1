@@ -58,6 +58,9 @@
 %TADS
 \section{TAD \tadNombre{Tablero}}
 
+\tadNombre{Casillero} es \tadNombre{Nat}
+
+
 \begin{tad}{\tadNombre{Tablero}}
 \tadGeneros{tablero}
 \tadExporta{bool, generadores, $\neg$, $\lor$, $\land$, $\implies$, $\oluego$, $\yluego$, $\impluego$}
@@ -79,10 +82,13 @@
 \tadOtrasOperaciones
 \tadOperacion{todosLosMovs}{casillero/c,tab/t}{conj(mov)}{$c \leq \text{\#casilleros(t)}$}
 \tadOperacion{conectados?}{casillero/c,casillero/c',tab/t}{bool}{$c, c' \leq \text{\#casilleros(t)}$}
-\tadOperacion{casillConMovMHastaC}{casillero/c,movimiento/m,tab/t}{conj(casillero)}{$c \leq \text{\#casilleros(t)}$}
-\tadOperacion{casillConMovMHastaCRecursi\'on}{casillero/c,movimiento/m,nat/n,tab/t}{conj(casillero)}{$c \leq \text{\#casilleros(t)}$}
+\tadOperacion{continentes}{tablero}{conj(continente)}{}
+\tadOperacion{dameContinentes}{nat,tablero}{conj(continente)}{}
 
-\tadAxiomas[\paratodo{tablero}{t,t'}]
+%\tadOperacion{casillConMovMHastaC}{casillero/c,movimiento/m,tab/t}{conj(casillero)}{$c \leq \text{\#casilleros(t)}$}
+%\tadOperacion{casillConMovMHastaCRecursi\'on}{casillero/c,movimiento/m,nat/n,tab/t}{conj(casillero)}{$c \leq \text{\#casilleros(t)}$}
+
+\tadAxiomas[\paratodo{tablero}{t}]
 
 %\tadAlinearAxiomas{\text{\#}casilleros $\oluego$ $x$}
 \tadAxioma{\text{\#}casilleros(crearTablero($k,k',m,m'$))}{2}
@@ -109,9 +115,13 @@ cont($c,t$) FI}
 
 \tadAxioma{conectados?($c,c',t$)}{$\neg \emptyset ? \text{(movsDesdeHasta($c,c',t$))}$}
 
-\tadAxioma{casillConMovMHastaC($m,c,t$)}{casillConMovMHastaCRecursi\'on($m,c,$\#casilleros($t$),$t$)}
+\tadAxioma{continentes($t$)}{dameContinentes(\#casilleros($t$)$,t$)}
 
-\tadAxioma{casillConMovMHastaCRecursi\'on($m,c,n,t$)}{\IF $m \in \text{movsDesdeHasta($n,c,t$)}$ THEN $\{n\} \cup \text{movsDesdeHasta($n-1,c,t$)}$ ELSE $\text{movsDesdeHasta($n-1,c,t$)}$ FI}
+\tadAxioma{dameContinentes($n,t$)}{\IF $n=0$ THEN $\emptyset$ ELSE \{cont($n,t$)\} $\cup$ dameContinentes($n-1,t$) FI}
+
+%\tadAxioma{casillConMovMHastaC($m,c,t$)}{casillConMovMHastaCRecursi\'on($m,c,$\#casilleros($t$),$t$)}
+%
+%\tadAxioma{casillConMovMHastaCRecursi\'on($m,c,n,t$)}{\IF $m \in \text{movsDesdeHasta($n,c,t$)}$ THEN $\{n\} \cup \text{movsDesdeHasta($n-1,c,t$)}$ ELSE $\text{movsDesdeHasta($n-1,c,t$)}$ FI}
 
 
 \end{tad}
@@ -167,7 +177,7 @@ cont($c,t$) FI}
 \tadOperacion{dameDominados}{nat,partida}{conj(casillero)}{}
 \tadOperacion{dameDisputados}{nat,partida}{conj(casillero)}{}
 \tadOperacion{dameVac\'ios}{nat,partida}{conj(casillero)}{}
-\tadOperacion{maxiFourcade}{nat,partida}{jugador}{terminada?($p$)}
+\tadOperacion{maxiFourcade}{nat,partida}{jugador}{}
 
 \tadAxiomas[\paratodo{partida}{p}]
 %\tadAlinearAxiomas{pred(suc($n$))}
@@ -182,7 +192,7 @@ cont($c,t$) FI}
 
 \tadAxioma{fichasEnCasillero($c,$ crearPartida($t,js,cs,ks$))}{\IF est\'a?($c,cs$) THEN $\{ \text{suc(posici\'on($c,cs$))} \}$ ELSE $\emptyset$ FI}
 \tadAxioma{fichasEnCasillero($c,$ agregarFicha($j,\tilde{c},p$))}{fichasEnCasillero($c,p$) $\cup$ (\IF $c=\tilde{c}$ THEN $\{j\}$ ELSE $\emptyset$ FI)}
-\tadAxioma{fichasEnCasillero($c,$ mover($j,m,n,p$))}{\IF dominado?($c,p$) THEN {\IF $j \in \text{fichasEnCasillero(c,p)} \land m \in \text{todosLosMovs($c$,tablero($p$))}$ THEN (fichasEnCasillero($c,p$) - agNVeces($j,n,\emptyset$)) $\cup$ \\ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} ELSE {\IF $\neg \emptyset$?(fichasEnCasillero($c,p$)) THEN sinUno(fichasEnCasillero($c,p$)) $\cup$ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} FI}
+\tadAxioma{fichasEnCasillero($c,$ mover($j,m,n,p$))}{\IF est\'aDominado?($c,p$) THEN {\IF $j \in \text{fichasEnCasillero(c,p)} \land m \in \text{todosLosMovs($c$,tablero($p$))}$ THEN (fichasEnCasillero($c,p$) - agNVeces($j,n,\emptyset$)) $\cup$ \\ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} ELSE {\IF est\'aDisputado?(fichasEnCasillero($c,p$)) THEN sinUno(fichasEnCasillero($c,p$)) $\cup$ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} FI}
 
 \tadAxioma{misi\'on($j,$crearPartida($t,js,cs,ks$))}{$ks[j-1]$}
 \tadAxioma{misi\'on($j,$agregarFicha($j,c,p$))}{misi\'on($j,p$)}
@@ -209,7 +219,7 @@ cont($c,t$) FI}
 
 \textbf{Funciones auxiliares}
 
-\tadAxioma{fichasVecinasDeJ($c,j,m,p$)}{\IF THEN ELSE FI}
+\tadAxioma{fichasVecinasDeJ($j,cn,m,c,n,p$)}{\IF $0<cn$ THEN {\IF $ \text{dominadoPor($j,cn,p$)} \land m \in \text{movsDesdeHasta($cn,c,$tablero($p$))} $ THEN agNVeces($j,$minimo(\#($j,$fichasEnCasillero($cn,$tablero($p$)))$,n$)$,\emptyset$) \\ $\cup$ fichasVecinasDeJ($j,cn-1,m,c,n,p$) ELSE fichasVecinasDeJ($j,cn-1,m,c,n,p$) FI} ELSE $\emptyset$ FI}
 
 \tadAxioma{est\'aActivo?($j$)}{tieneFichasEnAlg\'unCasillero($j$,\#casilleros(tablero($p$)),$p$)}
 
@@ -249,6 +259,20 @@ cont($c,t$) FI}
 
 
 \end{tad}
+
+\section{Funciones auxiliares de otros TADs}
+
+\tadOperacion{agNVeces}{$\alpha$,nat,multiconj($\alpha$)}{multiconj($\alpha$)}{}
+\tadAxioma{agNVeces($a,n,c$)}{\IF $n=0$ THEN $c$ ELSE Ag($a,$agNVeces($a,n-1,c$)) FI}
+
+\tadOperacion{$\argumento [ \argumento ]$}{secu($\alpha$),nat}{$\alpha$}{$n < $ long($s$)}
+\tadAxioma{s[n]}{\IF $n=0$ THEN prim($s$) ELSE fin($s$)[$n-1$] FI}
+
+\tadOperacion{aConj}{multiconj($\alpha$)}{conj($\alpha$)}{}
+\tadAxioma{aConj($c$)}{\IF $\emptyset?(c)$ THEN $\emptyset$ ELSE Ag(dameUno($c$),aConj(sinUno($c$))) FI}
+
+\tadOperacion{sinRepetidos?}{secu($\alpha$)}{bool}{}
+\tadAxioma{sinRepetidos?($s$)}{\IF vac\'ia?($s$) THEN true ELSE $\neg$ est\'a?(prim($s$),fin($s$)) $\land$ sinRepetidos?(fin($s$)) FI}
 
 \section{TAD \tadNombre{Tupla($\alpha_1$, \ldots, $\alpha_n$)}}
 

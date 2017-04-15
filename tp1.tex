@@ -22,9 +22,9 @@
 \hypersetup{%
  % Para que el PDF se abra a página completa.
  pdfstartview= {FitH \hypercalcbp{\paperheight-\topmargin-1in-\headheight}},
- pdfauthor={Cátedra de Algoritmos y Estructuras de Datos II - DC - UBA},
+ pdfauthor={Oliver Gibson - Catalina Gonzalo Juarros - Miguel Nehmad Alch\'e - Jessica Singer},
  pdfkeywords={TADs básicos},
- pdfsubject={Tipos abstractos de datos básicos}
+ pdfsubject={TP1 - Algoritmos y Estructuras de Datos II}
 }
 
 \parskip=5pt % 10pt es el tamaño de fuente
@@ -38,20 +38,20 @@
 \thispagestyle{fancy}
 \addtolength{\headheight}{1pt}
 \lhead{Algoritmos y Estructuras de Datos II}
-\rhead{$1^{\mathrm{er}}$ cuatrimestre de 2012}
+\rhead{$2^{\mathrm{do}}$ cuatrimestre de 2017}
 \cfoot{\thepage /\pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\author{Algoritmos y Estructuras de Datos II, DC, UBA.}
+\author{Oliver Gibson - Catalina Gonzalo Juarros - Miguel Nehmad Alch\'e - Jessica Singer}
 \date{}
 \title{Tipos abstractos de datos básicos}
 
 \begin{document}
 
 %Pagina de titulo e indice
-\thispagestyle{empty}
+%\thispagestyle{empty}
 
-\maketitle
+%\maketitle
 
 \newpage
 
@@ -65,30 +65,30 @@
 
 \begin{tad}{\tadNombre{Tablero}}
 \tadGeneros{tablero}
-\tadUsa{nat, bool, continente, casillero, multiconjExt($\alpha$), conj($\alpha$), movimiento}
 \tadExporta{tablero, generadores, observadores, continentes, todosLosMovs}
+\tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Casillero}, \tadNombre{Movimiento}, \tadNombre{Continente}, \tadNombre{MulticonjExt($\alpha$)}, \tadNombre{Conj($\alpha$)}}
 
 \tadIgualdadObservacional{t}{t'}{tablero}{$(\text{\#}casilleros(t) \igobs \text{\#}casilleros(t'))\ \yluego$\\ $(\forall(c,c':nat)) c,c' \leq \text{\#}casilleros(t) \impluego$\\$ (cont(c,t) \igobs cont(c,t') \land $\\$ movsDesdeHasta(c,c',t) \igobs movsDesdeHasta(c,c',t') ))$}
 %\tadAlinearFunciones{\argumento = 0?}{nat/$n$,nat/$m$}
 \tadGeneradores
 
 \begin{flushright}
-\textit{//Crea un tablero con dos casilleros. El 1 es del primer continente, el 2 del segundo; el primer movimiento va desde el primer casillero hasta el segundo, y el segundo movimiento hace lo opuesto.}
+\textit{//crearTablero: crea un tablero con dos casilleros. El 1 es del primer continente, el 2 del segundo; el primer movimiento va desde el primer casillero hasta el segundo, y el segundo movimiento hace lo opuesto.}
 \end{flushright}
 \tadOperacion{crearTablero}{continente,continente,mov,mov}{tablero}{}
 
 \begin{flushright}
-\textit{//Agrega un casillero del continente k conectado por el movimiento m al casillero c. El movimiento m' conecta c al casillero creado. Las restricciones en k aseguran que se cumpla el agrupamiento de continentes, las restricciones sobre m y m' aseguran que se cumpla la unicidad de movimientos y la necesidad de dos movimientos asegura que se cumpla la simetr\'ia.}
+\textit{//agregarCasillero: grega un casillero del continente k conectado por el movimiento m al casillero c. El movimiento m' conecta c al casillero creado. Las restricciones en k aseguran que se cumpla el agrupamiento de continentes, las restricciones sobre m y m' aseguran que se cumpla la unicidad de movimientos y la necesidad de dos movimientos asegura que se cumpla la simetr\'ia.}
 \end{flushright}
 \tadOperacion{agregarCasillero}{casillero/c,continente/k,mov/m,mov/m',tablero/t}{tablero}{$c \leq \text{\#casilleros($t$)} \yluego (k \igobs cont(c,t) \lor ((\forall c':nat) c' \leq \text{\#casilleros($t$)} \impluego cont(c',t) \neq k ) ) \yluego $\\$ m' \notin \text{todosLosMovs($c,t$)}$}
 
 \begin{flushright}
-\textit{//Conecta los casilleros pasados como par\'ametros con el movimiento m del primero al segundo y m' del segundo al primero.}
+\textit{//conectar: conecta los casilleros pasados como par\'ametros con el movimiento m del primero al segundo y m' del segundo al primero.}
 \end{flushright}
 \tadOperacion{conectar}{casillero/c,casillero/c',mov/m,mov/m',tablero/t}{tablero} {$c,c' \leq \text{\#casilleros($t$)} \land c \neq c' \yluego m \notin \text{todosLosMovs($c,t$)} \yluego m' \notin \text{todosLosMovs($c',t$)}$}
 
 \begin{flushright}
-\textit{//Agrega un movimiento en un solo sentido. Requiere que los casilleros ya est\'en conectados para que no se rompa la simetr\'ia.}
+\textit{//agregarFlecha: agrega un movimiento en un solo sentido. Requiere que los casilleros ya est\'en conectados para que no se rompa la simetr\'ia.}
 \end{flushright}
 \tadOperacion{agregarFlecha}{casillero/c,casillero/c',mov/m,tablero/t}{tablero} {$c, c' \leq \text{\#casilleros($t$)} \yluego \text{conectados?($c,c',t$)} \land m \notin \text{todosLosMovs($c,t$)}$}
 
@@ -153,7 +153,7 @@ cont($c,t$) FI}
 \begin{tad}{\tadNombre{Partida}}
 \tadGeneros{partida}
 \tadExporta{partida, generadores, observadores, jugadoresActivos, jugadoresEliminados, terminada?, ganador, casillerosDominados, casillerosDisputados, casillerosVac\'ios}
-\tadUsa{\tadNombre{Bool}, \tadNombre{Casillero}, \tadNombre{Jugador}, \tadNombre{Tablero}, \tadNombre{Movimiento}, \tadNombre{Nat}, \tadNombre{Multiconj($\alpha$)}, \tadNombre{Conj($\alpha$)}, \tadNombre{Continente}}
+\tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Casillero}, \tadNombre{Jugador}, \tadNombre{Tablero}, \tadNombre{Movimiento}, \tadNombre{Continente}, \tadNombre{MulticonjExt($\alpha$)}, \tadNombre{Conj($\alpha$)}, \tadNombre{SecuExt($\alpha$)}}
 
 \tadIgualdadObservacional{p}{p'}{partida}{$(\text{tablero($p$)} \igobs \text{tablero($p'$)} \land $\\$ \text{\#jugadores($p$)} \igobs \text{\#jugadores($p'$)} \land $\\$ ((\forall c:nat) c \leq \text{\#casilleros(tablero($p$))} \impluego $\\$ \text{fichasEnCasillero($c,p$)} \igobs \text{fichasEnCasillero($c,p'$)}) \land $\\$ ((\forall j:nat) j \leq \text{\#jugadores($p$)} \impluego $\\$ (\text{misi\'on($j,p$)} \igobs \text{misi\'on($j,p$)}) \land $\\$ \text{fichasPuestas($j,p$)} \igobs \text{fichasPuestas($j,p'$)} )$}
 %\tadAlinearFunciones{\argumento = 0?}{nat/$n$,nat/$m$}
@@ -176,7 +176,7 @@ cont($c,t$) FI}
 \begin{flushright}
 \textit{//crearPartida: crea una nueva partida cuyo tablero es t. La cantidad de jugadores es js y las secuencias cs y ks indican el casillero donde coloca la primera ficha y el continente que cada jugador debe conquistar respectivamente. Al i-\'esimo jugador le corresponde la (i-1)-\'esima posici\'on de cada secuencia, ya que el primer jugador es el 1 y los \'indices de las secuencias empiezan en 0.}
 \end{flushright}
-\tadOperacion{crearPartida}{tablero/t,nat/js,secuExt(casillero)/cs,secuExt(continente)/ks}{partida}{$2 \leq js \land \text{long($cs$)} = \text{long($ks$)} = js \land \text{sinRepetidos($cs$)} \land ((\forall k:string) \text{est\'a?($k,ks$)} \Rightarrow $\\$ k \in \text{dameConts($t$)}) \land ((\forall c:nat) \text{est\'a?($c,cs$)} \Rightarrow c \leq \text{\#casilleros($t$)})$}
+\tadOperacion{crearPartida}{tablero/t,nat/js,secuExt(casillero)/cs,secuExt(continente)/ks}{partida}{$2 \leq js \land \text{long($cs$)} = \text{long($ks$)} = js \land \text{sinRepetidos($cs$)} \land ((\forall k:string) \text{est\'a?($k,ks$)} \Rightarrow $\\$ k \in \text{continentes($t$)}) \land ((\forall c:nat) \text{est\'a?($c,cs$)} \Rightarrow c \leq \text{\#casilleros($t$)})$}
 
 \begin{flushright}
 \textit{//agregarFicha: agrega una ficha del jugador j en el casillero c. Requiere que est\'e vac\'io o dominado por j.}
@@ -269,11 +269,11 @@ cont($c,t$) FI}
 
 \textbf{Funciones auxiliares}
 
-\tadAxioma{fichasVecinasDeJ($j,cn,m,c,n,p$)}{\IF $0<cn$ THEN {\IF $ \text{dominadoPor($j,cn,p$)} \land m \in \text{movsDesdeHasta($cn,c,$tablero($p$))} $ THEN agNVeces($j,$minimo(\#($j,$fichasEnCasillero($cn,$tablero($p$)))$,n$)$,\emptyset$) \\ $\cup$ fichasVecinasDeJ($j,cn-1,m,c,n,p$) ELSE fichasVecinasDeJ($j,cn-1,m,c,n,p$) FI} ELSE $\emptyset$ FI}
+\tadAxioma{fichasVecinasDeJ($j,cn,m,c,n,p$)}{\IF $0<cn$ THEN {\IF $ \text{dominadoPor($j,cn,p$)} \land m \in \text{movsDesdeHasta($cn,c,$tablero($p$))} $ THEN agNVeces($j,$m\'in(\#($j,$fichasEnCasillero($cn,$tablero($p$)))$,n$)$,\emptyset$) \\ $\cup$ fichasVecinasDeJ($j,cn-1,m,c,n,p$) ELSE fichasVecinasDeJ($j,cn-1,m,c,n,p$) FI} ELSE $\emptyset$ FI}
 
 \tadAxioma{est\'aActivo?($j$)}{tieneFichasEnAlg\'unCasillero($j$,\#casilleros(tablero($p$)),$p$)}
 
-\tadAxioma{tieneFichasEnAlg\'unCasillero($j,n,p$)}{\IF $n = 0$ THEN false ELSE $0<\text{fichasEnCasillero($j,n,p$)} \lor$ \\ tieneFichasEnAlg\'unCasillero($j,n-1,p$) FI}
+\tadAxioma{tieneFichasEnAlg\'unCasillero($j,n,p$)}{\IF $n = 0$ THEN false ELSE $0<\text{\#($j,$ fichasEnCasillero($n,p$))} \lor$ \\ tieneFichasEnAlg\'unCasillero($j,n-1,p$) FI}
 
 \tadAxioma{dameActivos($p,n$)}{\IF $n = 0$ THEN $\emptyset$ ELSE {\IF est\'aActivo?($n,p$) THEN Ag($n,$dameActivos($p,n-1$)) ELSE dameActivos($p,n-1$) FI} FI}
 
@@ -305,7 +305,7 @@ cont($c,t$) FI}
 \begin{flushright}
 \textit{//La funci\'on maxiFourcade te devuelve al m\'as winner de todos. Si no lo conoc\'es, googlealo.}
 \end{flushright}
-\tadAxioma{maxiFourcade($n,p$)}{\IF $n=1 \ or $ complet\'oLaMisi\'on?($n,p$) THEN $n$ ELSE maxiFourcade($n-1,p$) FI}
+\tadAxioma{maxiFourcade($n,p$)}{\IF jugadoresActivos($p$) $=\{n\} \lor $ complet\'oLaMisi\'on?($n,p$) THEN $n$ ELSE maxiFourcade($n-1,p$) FI}
 
 
 \end{tad}
@@ -332,7 +332,7 @@ cont($c,t$) FI}
 
 \subsection{TAD \tadNombre{MulticonjExt} extiende \tadNombre{Multiconjunto}}
 
-\begin{tad}{\tadNombre{multiconjExt}}
+\begin{tad}{\tadNombre{MulticonjExt}}
 
 (...)
 

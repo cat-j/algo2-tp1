@@ -1,6 +1,6 @@
 \select@language {spanish}
 \contentsline {paragraph}{\textsc {Casillero} es \textsc {Nat}}{1}{section*.2}
-\contentsline {paragraph}{\textsc {Movimiento} es \textsc {Nat}}{1}{section*.3}
+\contentsline {paragraph}{\textsc {Mov} es \textsc {Nat}}{1}{section*.3}
 \contentsline {paragraph}{\textsc {Continente} es \textsc {String}}{1}{section*.4}
 \contentsline {paragraph}{\textsc {Jugador} es \textsc {Nat}}{1}{section*.5}
 \contentsline {section}{\numberline {1}TAD \textsc {Tablero}}{1}{section.1}

@@ -8,7 +8,7 @@
 \usepackage{latexsym}
 \usepackage{lastpage}
 \usepackage{aed2-symb,aed2-itef,aed2-tad}
-\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage[colorlinks=false]{hyperref}
 \usepackage{calc}
 \usepackage{graphicx}
 \usepackage[tight]{subfigure}
@@ -53,7 +53,9 @@
 
 %\maketitle
 
-\newpage
+\tableofcontents
+
+%\pagebreak
 
 \paragraph{\tadNombre{Casillero} es \tadNombre{Nat}}
 \paragraph{\tadNombre{Movimiento} es \tadNombre{Nat}}
@@ -68,42 +70,42 @@
 \tadExporta{tablero, generadores, observadores, continentes, todosLosMovs}
 \tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Casillero}, \tadNombre{Movimiento}, \tadNombre{Continente}, \tadNombre{MulticonjExt($\alpha$)}, \tadNombre{Conj($\alpha$)}}
 
-\tadIgualdadObservacional{t}{t'}{tablero}{$(\text{\#}casilleros(t) \igobs \text{\#}casilleros(t'))\ \yluego$\\ $(\forall(c,c':nat)) c,c' \leq \text{\#}casilleros(t) \impluego$\\$ (cont(c,t) \igobs cont(c,t') \land $\\$ movsDesdeHasta(c,c',t) \igobs movsDesdeHasta(c,c',t') ))$}
+\tadIgualdadObservacional{t}{t'}{tablero}{$(\text{\#}casilleros(t) \igobs \text{\#}casilleros(t'))\ \yluego$\\ $(\forall(c,c':nat)) 1 \leq c,c' \leq \text{\#}casilleros(t) \impluego$\\$ (cont(c,t) \igobs cont(c,t') \land $\\$ movsDesdeHasta(c,c',t) \igobs movsDesdeHasta(c,c',t') ))$}
 %\tadAlinearFunciones{\argumento = 0?}{nat/$n$,nat/$m$}
 \tadGeneradores
 
 \begin{flushright}
-\textit{//crearTablero: crea un tablero con dos casilleros. El 1 es del primer continente, el 2 del segundo; el primer movimiento va desde el primer casillero hasta el segundo, y el segundo movimiento hace lo opuesto.}
+\textit{//crearTablero: crea un tablero con dos casilleros. El 1 es del primer continente, el 2 del segundo; el primer movimiento va desde el primer casillero hasta el segundo y el segundo movimiento hace lo opuesto.}
 \end{flushright}
 \tadOperacion{crearTablero}{continente,continente,mov,mov}{tablero}{}
 
 \begin{flushright}
-\textit{//agregarCasillero: grega un casillero del continente k conectado por el movimiento m al casillero c. El movimiento m' conecta c al casillero creado. Las restricciones en k aseguran que se cumpla el agrupamiento de continentes, las restricciones sobre m y m' aseguran que se cumpla la unicidad de movimientos y la necesidad de dos movimientos asegura que se cumpla la simetr\'ia.}
+\textit{//agregarCasillero: agrega un casillero del continente k conectado por el movimiento m al casillero c. El movimiento m' conecta c al casillero creado. Las restricciones en k aseguran que se cumpla el agrupamiento de continentes, las restricciones sobre m y m' aseguran que se cumpla la unicidad de movimientos y la necesidad de dos movimientos asegura que se cumpla la simetr\'ia. Si n es la cantidad de casilleros en el momento que esta funci\'on es llamada, el n\'umero del casillero nuevo ser\'a n+1.}
 \end{flushright}
-\tadOperacion{agregarCasillero}{casillero/c,continente/k,mov/m,mov/m',tablero/t}{tablero}{$c \leq \text{\#casilleros($t$)} \yluego (k \igobs cont(c,t) \lor ((\forall c':nat) c' \leq \text{\#casilleros($t$)} \impluego cont(c',t) \neq k ) ) \yluego $\\$ m' \notin \text{todosLosMovs($c,t$)}$}
+\tadOperacion{agregarCasillero}{casillero/c,continente/k,mov/m,mov/m',tablero/t}{tablero}{$1 \leq c \leq \text{\#casilleros($t$)} \yluego (k \igobs cont(c,t) \lor ((\forall c':nat) 1 \leq c' \leq \text{\#casilleros($t$)} \impluego $\\$ cont(c',t) \neq k ) ) \yluego m' \notin \text{todosLosMovs($c,t$)}$}
 
 \begin{flushright}
 \textit{//conectar: conecta los casilleros pasados como par\'ametros con el movimiento m del primero al segundo y m' del segundo al primero.}
 \end{flushright}
-\tadOperacion{conectar}{casillero/c,casillero/c',mov/m,mov/m',tablero/t}{tablero} {$c,c' \leq \text{\#casilleros($t$)} \land c \neq c' \yluego m \notin \text{todosLosMovs($c,t$)} \yluego m' \notin \text{todosLosMovs($c',t$)}$}
+\tadOperacion{conectar}{casillero/c,casillero/c',mov/m,mov/m',tablero/t}{tablero} {$1 \leq c,c' \leq \text{\#casilleros($t$)} \land c \neq c' \yluego m \notin \text{todosLosMovs($c,t$)} \yluego m' \notin \text{todosLosMovs($c',t$)}$}
 
 \begin{flushright}
 \textit{//agregarFlecha: agrega un movimiento en un solo sentido. Requiere que los casilleros ya est\'en conectados para que no se rompa la simetr\'ia.}
 \end{flushright}
-\tadOperacion{agregarFlecha}{casillero/c,casillero/c',mov/m,tablero/t}{tablero} {$c, c' \leq \text{\#casilleros($t$)} \yluego \text{conectados?($c,c',t$)} \land m \notin \text{todosLosMovs($c,t$)}$}
+\tadOperacion{agregarFlecha}{casillero/c,casillero/c',mov/m,tablero/t}{tablero} {$1 \leq c, c' \leq \text{\#casilleros($t$)} \yluego \text{conectados?($c,c',t$)} \yluego m \notin \text{todosLosMovs($c,t$)}$}
 
 \tadObservadores
 \tadOperacion{\text{\#}casilleros}{tablero}{nat}{}
-\tadOperacion{cont}{casillero/c,tab/t}{continente}{$c \leq \text{\#casilleros(t)}$}
-\tadOperacion{movsDesdeHasta}{casillero/c,casillero/c',tab/t}{conj(mov)}{$c, c' \leq \text{\#casilleros(t)}$}
+\tadOperacion{cont}{casillero/c,tab/t}{continente}{$1 \leq c \leq \text{\#casilleros(t)}$}
+\tadOperacion{movsDesdeHasta}{casillero/c,casillero/c',tab/t}{conj(mov)}{$1 \leq c, c' \leq \text{\#casilleros(t)}$}
 
 \tadOtrasOperaciones
 
 \begin{flushright}
-\textit{//todosLosMovs: devuelve un conjunto con todos los movimientos que salen del casillero c a cualquier casillero del tablero.}
+\textit{//todosLosMovs: devuelve un conjunto con todos los movimientos que van del casillero c a cualquier casillero del tablero.}
 \end{flushright}
-\tadOperacion{todosLosMovs}{casillero/c,tab/t}{conj(mov)}{$c \leq \text{\#casilleros(t)}$}
-\tadOperacion{conectados?}{casillero/c,casillero/c',tab/t}{bool}{$c, c' \leq \text{\#casilleros(t)}$}
+\tadOperacion{todosLosMovs}{casillero/c,tab/t}{conj(mov)}{$1 \leq c \leq \text{\#casilleros(t)}$}
+\tadOperacion{conectados?}{casillero/c,casillero/c',tab/t}{bool}{$1 \leq c, c' \leq \text{\#casilleros(t)}$}
 \tadOperacion{continentes}{tablero}{conj(continente)}{}
 \tadOperacion{dameContinentes}{nat,tablero}{conj(continente)}{}
 
@@ -118,6 +120,8 @@
 \tadAxioma{\text{\#}casilleros(conectar($c,c',m,m',t$))}{\text{\#}casilleros($t$)}
 \tadAxioma{\text{\#}casilleros(agregarFlecha($c,c',m,t$))}{\text{\#}casilleros($t$)}
 
+\medskip
+
 \tadAxioma{cont($c$,crearTablero($k,k',m,m'$))}{\IF $c = 1$ THEN $k$ ELSE
 $k'$ FI}
 \tadAxioma{cont($c$,agregarCasillero($\tilde{c},k,m,m',t$))}{\IF $c = \text{suc(\#casilleros($t$))}$ THEN $k$ ELSE
@@ -125,15 +129,21 @@ cont($c,t$) FI}
 \tadAxioma{cont($c$,conectar($\tilde{c},\tilde{c}',m,m',t$))}{cont($c,t$)}
 \tadAxioma{cont($c$,agregarFlecha($\tilde{c},\tilde{c}',m,t$))}{cont($c,t$)}
 
+\medskip
+
 \tadAxioma{movsDesdeHasta($c,c',$crearTablero($k,k',m,m'$))}{\IF $c=1 \land c'=2$ THEN $\{m\}$ ELSE {\IF $c=2 \land c'=1$ THEN $\{m'\}$ ELSE $\emptyset$ FI } FI}
 \tadAxioma{movsDesdeHasta($c,c',\text{agregarCasillero($\tilde{c},k,m,m',t$)}$)}{\IF $c = \text{suc(\#casilleros($t$))}$ THEN {\IF $c' = \tilde{c}$ THEN $\{m\}$ ELSE $\emptyset$ FI} ELSE {\IF $c = \tilde{c} \land c' = \text{suc(\#casilleros($t$))} $ THEN $\{m'\}$ ELSE $\text{movsDesdeHasta($c,c',t$)}$ FI} FI}
 \tadAxioma{movsDesdeHasta($c,c',\text{conectar($\tilde{c},\tilde{c}',m,m',t$)}$)}{\IF $c = \tilde{c} \land c' = \tilde{c}' $ THEN $\{m\} \cup \text{movsDesdeHasta($c,c',t$)}$ ELSE {\IF $c = \tilde{c}' \land c' = \tilde{c} $ THEN $\{m'\} \cup \text{movsDesdeHasta($c,c',t$)}$ ELSE $\text{movsDesdeHasta($c,c',t$)}$ FI} FI}
 \tadAxioma{movsDesdeHasta($c,c',\text{agregarFlecha($\tilde{c},\tilde{c}',m,t$)}$)}{\IF $c = \tilde{c} \land c'=\tilde{c}'$ THEN $\{m\} \cup \text{movsDesdeHasta($c,c',t$)}$ ELSE $\text{movsDesdeHasta($c,c',t$)}$ FI}
 
+\bigskip
+
 \tadAxioma{todosLosMovs($c$,crearTablero($k,k',m,m'$))}{\IF $c=1$ THEN $\{m\}$ ELSE $\{m'\}$ FI}
 \tadAxioma{todosLosMovs($c$,agregarCasillero($\tilde{c},k,m,m',t$))}{\IF $c=\text{suc(\#casilleros($t$))}$ THEN $\{m\}$ ELSE {\IF $c=\tilde{c}$ THEN $\{m'\} \cup \text{todosLosMovs($c,t$)}$ ELSE $\text{todosLosMovs($c,t$)}$ FI} FI}
 \tadAxioma{todosLosMovs($c,$conectar($\tilde{c},\tilde{c}',m,m',t$))}{\IF $c=\tilde{c}$ THEN $\{m\} \cup \text{todosLosMovs($c,t$)}$ ELSE {\IF $c=\tilde{c}'$ THEN $\{m'\} \cup \text{todosLosMovs($c,t$)}$ ELSE $\text{todosLosMovs($c,t$)}$ FI} FI}
 \tadAxioma{todosLosMovs($c,$agregarFlecha($\tilde{c},\tilde{c}',m,t$))}{\IF $c=\tilde{c}$ THEN $\{m\} \cup \text{todosLosMovs($c,t$)}$ ELSE $\text{todosLosMovs($c,t$)}$ FI}
+
+\bigskip
 
 \tadAxioma{conectados?($c,c',t$)}{$\neg \emptyset ? \text{(movsDesdeHasta($c,c',t$))}$}
 
@@ -148,6 +158,8 @@ cont($c,t$) FI}
 
 \end{tad}
 
+\pagebreak
+
 \section{TAD \tadNombre{Partida}}
 
 \begin{tad}{\tadNombre{Partida}}
@@ -155,7 +167,7 @@ cont($c,t$) FI}
 \tadExporta{partida, generadores, observadores, jugadoresActivos, jugadoresEliminados, terminada?, ganador, casillerosDominados, casillerosDisputados, casillerosVac\'ios}
 \tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Casillero}, \tadNombre{Jugador}, \tadNombre{Tablero}, \tadNombre{Movimiento}, \tadNombre{Continente}, \tadNombre{MulticonjExt($\alpha$)}, \tadNombre{Conj($\alpha$)}, \tadNombre{SecuExt($\alpha$)}}
 
-\tadIgualdadObservacional{p}{p'}{partida}{$(\text{tablero($p$)} \igobs \text{tablero($p'$)} \land $\\$ \text{\#jugadores($p$)} \igobs \text{\#jugadores($p'$)} \land $\\$ ((\forall c:nat) c \leq \text{\#casilleros(tablero($p$))} \impluego $\\$ \text{fichasEnCasillero($c,p$)} \igobs \text{fichasEnCasillero($c,p'$)}) \land $\\$ ((\forall j:nat) j \leq \text{\#jugadores($p$)} \impluego $\\$ (\text{misi\'on($j,p$)} \igobs \text{misi\'on($j,p$)}) \land $\\$ \text{fichasPuestas($j,p$)} \igobs \text{fichasPuestas($j,p'$)} )$}
+\tadIgualdadObservacional{p}{p'}{partida}{$(\text{tablero($p$)} \igobs \text{tablero($p'$)} \land $\\$ \text{\#jugadores($p$)} \igobs \text{\#jugadores($p'$)} \land $\\$ ((\forall c:nat) 1 \leq c \leq \text{\#casilleros(tablero($p$))} \impluego $\\$ \text{fichasEnCasillero($c,p$)} \igobs \text{fichasEnCasillero($c,p'$)}) \land $\\$ ((\forall j:nat) 1 \leq j \leq \text{\#jugadores($p$)} \impluego $\\$ (\text{misi\'on($j,p$)} \igobs \text{misi\'on($j,p$)}) \land $\\$ \text{fichasPuestas($j,p$)} \igobs \text{fichasPuestas($j,p'$)} )$}
 %\tadAlinearFunciones{\argumento = 0?}{nat/$n$,nat/$m$}
 \tadObservadores
 
@@ -164,28 +176,32 @@ cont($c,t$) FI}
 \begin{flushright}
 \textit{//fichasEnCasillero: las fichas de cada jugador est\'an representadas por  su cardinal en un multiconjunto. Una aparici\'on de j en fichasEnCasillero representa una ficha de j en el casillero dado. Esta convenci\'on con los multiconjuntos se mantendr\'a durante toda la especificaci\'on para representar las fichas en cada casillero.}
 \end{flushright}
-\tadOperacion{fichasEnCasillero}{casillero/c,partida/p}{multiconjExt(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{misi\'on}{jugador/j,partida/p}{continente}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{fichasEnCasillero}{casillero/c,partida/p}{multiconjExt(jugador)}{$1 \leq c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{misi\'on}{jugador/j,partida/p}{continente}{$1 \leq j \leq \text{\#jugadores($p$)}$}
 \begin{flushright}
 \textit{//fichasPuestas: devuelve la cantidad de fichas que puso j a lo largo de todo el partido.}
 \end{flushright}
-\tadOperacion{fichasPuestas}{jugador/j,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{fichasPuestas}{jugador/j,partida/p}{nat}{$1 \leq j \leq \text{\#jugadores($p$)}$}
+
+\medskip
 
 \tadGeneradores
 
 \begin{flushright}
 \textit{//crearPartida: crea una nueva partida cuyo tablero es t. La cantidad de jugadores es js y las secuencias cs y ks indican el casillero donde coloca la primera ficha y el continente que cada jugador debe conquistar respectivamente. Al i-\'esimo jugador le corresponde la (i-1)-\'esima posici\'on de cada secuencia, ya que el primer jugador es el 1 y los \'indices de las secuencias empiezan en 0.}
 \end{flushright}
-\tadOperacion{crearPartida}{tablero/t,nat/js,secuExt(casillero)/cs,secuExt(continente)/ks}{partida}{$2 \leq js \land \text{long($cs$)} = \text{long($ks$)} = js \land \text{sinRepetidos($cs$)} \land ((\forall k:string) \text{est\'a?($k,ks$)} \Rightarrow $\\$ k \in \text{continentes($t$)}) \land ((\forall c:nat) \text{est\'a?($c,cs$)} \Rightarrow c \leq \text{\#casilleros($t$)})$}
+\tadOperacion{crearPartida}{tablero/t,nat/js,secuExt(casillero)/cs,secuExt(continente)/ks}{partida}{$2 \leq js \land \text{long($cs$)} = \text{long($ks$)} = js \land \text{sinRepetidos($cs$)} \land ((\forall k:string) \text{est\'a?($k,ks$)} \Rightarrow $\\$ k \in \text{continentes($t$)}) \land ((\forall c:nat) \text{est\'a?($c,cs$)} \Rightarrow 1 \leq c \leq \text{\#casilleros($t$)})$}
 
 \begin{flushright}
 \textit{//agregarFicha: agrega una ficha del jugador j en el casillero c. Requiere que est\'e vac\'io o dominado por j.}
 \end{flushright}
-\tadOperacion{agregarFicha}{jugador/j,casillero/c,partida/p}{partida}{$j \leq \text{\#jugadores($p$)} \yluego \text{est\'aActivo?($j,p$)} \land \neg \text{terminada?($p$)} \land c \leq \text{\#casilleros(tablero($p$))} \yluego $\\$ \text{jugadoresEnCasillero($c,p$)} = \emptyset \lor \text{jugadoresEnCasillero($c,p$)} = \{j\} $}
+\tadOperacion{agregarFicha}{jugador/j,casillero/c,partida/p}{partida}{$1 \leq j \leq \text{\#jugadores($p$)} \yluego \text{est\'aActivo?($j,p$)} \land \neg \text{terminada?($p$)} \land $\\$ 1 \leq c \leq \text{\#casilleros(tablero($p$))} \yluego (\text{jugadoresEnCasillero($c,p$)} = \emptyset \lor $\\$ \text{jugadoresEnCasillero($c,p$)} = \{j\}) $}
 \begin{flushright}
 \textit{//mover: el jugador j realiza la acci\'on de movimiento m con n fichas. El funcionamiento se detalla m\'as profundamente en los axiomas.}
 \end{flushright}
-\tadOperacion{mover}{jugador/j,movimiento/m,nat/n,partida/p}{partida}{$j \leq \text{\#jugadores($p$)} \land \text{est\'aActivo?($j,p$)} \land \neg \text{terminada?($p$)}$}
+\tadOperacion{mover}{jugador/j,movimiento/m,nat/n,partida/p}{partida}{$1 \leq j \leq \text{\#jugadores($p$)} \yluego \text{est\'aActivo?($j,p$)} \land \neg \text{terminada?($p$)}$}
+
+\medskip
 
 \tadOtrasOperaciones
 
@@ -194,36 +210,40 @@ cont($c,t$) FI}
 \tadOperacion{jugadoresEliminados}{partida}{conj(jugador)}{}
 \tadOperacion{terminada?}{partida}{bool}{}
 \tadOperacion{ganador}{partida}{jugador}{terminada?($p$)}
+\tadOperacion{cu\'antosLeFaltan}{jugador/j,partida/p}{nat}{$1 \leq j \leq \text{\#jugadores($p$)} \land \neg \text{terminada?($p$)}$}
 \tadOperacion{casillerosDominados}{partida}{conj(tupla(casillero,conj(jugador)))}{}
 \tadOperacion{casillerosDisputados}{partida}{conj(tupla(casillero,conj(jugador)))}{}
 \tadOperacion{casillerosVac\'ios}{partida}{conj(casillero)}{}
 
+\bigskip
+
 \textbf{Funciones auxiliares}
 
 \begin{flushright}
-\textit{//fichasVecinasDeJ: dado un casillero c, devuelve un multiconjunto con todas las fichas de j de todos los casilleros del tablero que con el movimiento m podr\'ian llegar a c.}
+\textit{//fichasVecinasDeJ: dado un casillero c, devuelve un multiconjunto con todas las fichas de j de todos los casilleros del tablero que con el movimiento m podr\'ian llegar a c si j realiza una acci\'on de movimiento con n fichas. cn sirve para poder hacer recursi\'on en el n\'umero del casillero que se examina.}
 \end{flushright}
-\tadOperacion{fichasVecinasDeJ}{casillero/c,jugador/j,movimiento/m,partida/p}{multiconjExt(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{est\'aActivo?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
-\tadOperacion{tieneFichasEnAlg\'unCasillero?}{jugador/j,nat/n,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{fichasVecinasDeJ}{jugador/j,nat/cn,mov,casillero/c,nat/n,partida/p}{multiconjExt(jugador)}{$1 \leq c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{est\'aActivo?}{jugador/j,partida/p}{bool}{$1 \leq j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{tieneFichasEnAlg\'unCasillero?}{jugador/j,nat/n,partida/p}{bool}{$1 \leq j \leq \text{\#jugadores($p$)}$}
 \tadOperacion{dameActivos}{partida,nat}{conj(jugador)}{}
 \tadOperacion{dameEliminados}{partida,nat}{conj(jugador)}{}
 \tadOperacion{algunoComplet\'oLaMisi\'on?}{nat,partida}{bool}{}
-\tadOperacion{complet\'oLaMisi\'on?}{jugador/j,partida/p}{bool}{$j \leq \text{\#jugadores($p$)}$}
-\tadOperacion{cu\'antosLeFaltan}{jugador/j,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{complet\'oLaMisi\'on?}{jugador/j,partida/p}{bool}{$1 \leq j \leq \text{\#jugadores($p$)}$}
 
 \begin{flushright}
 \textit{//contarNoDominadosHasta: esta funci\'on sirve de auxiliar para saber si el jugador j complet\'o o no su misi\'on. Al hacer recursi\'on sobre el par\'ametro n, devuelve la cantidad de casilleros numerados entre 1 y n que pertenecen al continente que j debe conquistar y no son dominados por j.}
 \end{flushright}
-\tadOperacion{contarNoDominadosHasta}{jugador/j,nat/n,partida/p}{nat}{$j \leq \text{\#jugadores($p$)}$}
-\tadOperacion{est\'aDominado?}{casillero/c,partida/p}{bool}{$c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{est\'aDisputado?}{casillero/c,partida/p}{bool}{$c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{jugadoresEnCasillero}{casillero/c,partida/p}{conj(jugador)}{$c \leq \text{\#casilleros(tablero($p$))}$}
-\tadOperacion{dominadoPor}{jugador/j,casillero/c,partida/p}{bool}{$j \leq \text{\#jugadores($p$)} \land c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{contarNoDominadosHasta}{jugador/j,nat/n,partida/p}{nat}{$1 \leq j \leq \text{\#jugadores($p$)}$}
+\tadOperacion{est\'aDominado?}{casillero/c,partida/p}{bool}{$1 \leq c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{est\'aDisputado?}{casillero/c,partida/p}{bool}{$1 \leq c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{jugadoresEnCasillero}{casillero/c,partida/p}{conj(jugador)}{$1 \leq c \leq \text{\#casilleros(tablero($p$))}$}
+\tadOperacion{dominadoPor}{jugador/j,casillero/c,partida/p}{bool}{$1 \leq j \leq \text{\#jugadores($p$)} \land 1 \leq c \leq \text{\#casilleros(tablero($p$))}$}
 \tadOperacion{dameDominados}{nat,partida}{conj(casillero)}{}
 \tadOperacion{dameDisputados}{nat,partida}{conj(casillero)}{}
 \tadOperacion{dameVac\'ios}{nat,partida}{conj(casillero)}{}
 \tadOperacion{maxiFourcade}{nat,partida}{jugador}{}
+
+\medskip
 
 \tadAxiomas[\paratodo{partida}{p}]
 %\tadAlinearAxiomas{pred(suc($n$))}
@@ -232,9 +252,13 @@ cont($c,t$) FI}
 \tadAxioma{tablero(agregarFicha($j,c,p$))}{tablero($p$)}
 \tadAxioma{tablero(mover($j,m,n,p$))}{tablero($p$)}
 
+\medskip
+
 \tadAxioma{\#jugadores(crearPartida($t,js,cs,ks$))}{$js$}
 \tadAxioma{\#jugadores(agregarFicha($j,c,p$))}{$\text{\#jugadores($p$)}$}
 \tadAxioma{\#jugadores(mover($j,m,n,p$))}{$\text{\#jugadores($p$)}$}
+
+\medskip
 
 \tadAxioma{fichasEnCasillero($c,$ crearPartida($t,js,cs,ks$))}{\IF est\'a?($c,cs$) THEN $\{ \text{suc(posici\'on($c,cs$))} \}$ ELSE $\emptyset$ FI}
 \tadAxioma{fichasEnCasillero($c,$ agregarFicha($j,\tilde{c},p$))}{fichasEnCasillero($c,p$) $\cup$ (\IF $c=\tilde{c}$ THEN $\{j\}$ ELSE $\emptyset$ FI)}
@@ -242,30 +266,40 @@ cont($c,t$) FI}
 \begin{flushright}
 \textit{//fichasEnCasillero: si el casillero es dominado por el jugador que hizo el movimiento, tendr\'a n fichas menos de \'este, o 0 en caso de que hubiera menos de n fichas. Si el casillero estaba disputado, alg\'un jugador tendr\'a una ficha menos. En cualquier caso se agregan todas las fichas posibles de j a trav\'es de los casilleros dominados por j que se conecten a c con el movimiento m.}
 \end{flushright}
-\tadAxioma{fichasEnCasillero($c,$ mover($j,m,n,p$))}{\IF est\'aDominado?($c,p$) THEN {\IF $j \in \text{fichasEnCasillero(c,p)} \land m \in \text{todosLosMovs($c$,tablero($p$))}$ THEN (fichasEnCasillero($c,p$) - agNVeces($j,n,\emptyset$)) $\cup$ \\ fichasVecinasDeJ($c,j,m,p$) ELSE fichasEnCasillero($c,p$) $\cup$ fichasVecinasDeJ($c,j,m,p$) FI} ELSE {\IF est\'aDisputado?(fichasEnCasillero($c,p$)) THEN sinUno(fichasEnCasillero($c,p$)) $\cup$ fichasVecinasDeJ($c,j,m,p$) ELSE fichasVecinasDeJ($c,j,m,p$) FI} FI}
+\tadAxioma{fichasEnCasillero($c,$ mover($j,m,n,p$))}{\IF est\'aDominado?($c,p$) THEN {\IF $j \in \text{fichasEnCasillero(c,p)} \land m \in \text{todosLosMovs($c$,tablero($p$))}$ THEN (fichasEnCasillero($c,p$) - agNVeces($j,n,\emptyset$)) $\cup$ \\ fichasVecinasDeJ($j,\text{\#casilleros(tablero($p$))},m,c,n,p$) ELSE fichasEnCasillero($c,p$) $\cup$ \\ fichasVecinasDeJ($j,\text{\#casilleros(tablero($p$))},m,c,n,p$) FI} ELSE {\IF est\'aDisputado?(fichasEnCasillero($c,p$)) THEN sinUno(fichasEnCasillero($c,p$)) $\cup$ \\ fichasVecinasDeJ($j,\text{\#casilleros(tablero($p$))},m,c,n,p$) ELSE fichasVecinasDeJ($j,\text{\#casilleros(tablero($p$))},m,c,n,p$) FI} FI}
+
+\medskip
 
 \tadAxioma{misi\'on($j,$crearPartida($t,js,cs,ks$))}{$ks[j-1]$}
 \tadAxioma{misi\'on($j,$agregarFicha($j,c,p$))}{misi\'on($j,p$)}
 \tadAxioma{misi\'on($j,$mover($j,m,n,p$))}{misi\'on($j,p$)}
 
+\medskip
+
 \tadAxioma{fichasPuestas($j,$crearPartida($t,js,cs,ks$))}{1}
 \tadAxioma{fichasPuestas($j,$agregarFicha($\tilde{j},c,p$))}{fichasPuestas($j,p$) + (\IF $j=\tilde{j}$ THEN $1$ ELSE $0$ FI)}
 \tadAxioma{fichasPuestas($j,$mover($t,js,cs,ks$))}{fichasPuestas($j,p$)}
 
+\medskip
+
 \textbf{Funciones requeridas por la empresa}
 
-\tadAxioma{jugadoresActivos($p$)}{dameActivos($p,$\#jugadores($p$))}
+\tadAxioma{jugadoresActivos($p$)}{dameActivos(\#jugadores($p$),$p$)}
 
-\tadAxioma{jugadoresEliminados($p$)}{dameEliminados($p,$\#jugadores($p$))}
+\tadAxioma{jugadoresEliminados($p$)}{dameEliminados(\#jugadores($p$),$p$)}
 
 \tadAxioma{terminada?($p$)}{\#(jugadoresActivos($p$))$=1 \lor \text{algunoComplet\'oLaMisi\'on?(\#jugadores($p$),$p$)}$}
 
 \tadAxioma{ganador($p$)}{maxiFourcade(\#jugadores($p$),$p$)}
 
+\tadAxioma{cu\'antosLeFaltan($j,p$)}{contarNoDominadosHasta($j,$\#casilleros(tablero($p$)),$p$)}
+
 \tadAxioma{casillerosDominados($p$)}{dameDominados(\#casilleros(tablero($p$)),$p$)}
 
 \tadAxioma{casillerosDisputados($p$)}{dameDisputados(\#casilleros(tablero($p$)),$p$)}
 \tadAxioma{casillerosVac\'ios($p$)}{dameVac\'ios(\#casilleros(tablero($p$)),$p$)}
+
+\medskip
 
 \textbf{Funciones auxiliares}
 
@@ -282,8 +316,6 @@ cont($c,t$) FI}
 \tadAxioma{algunoComplet\'oLaMisi\'on?($n,p$)}{\IF $n=0$ THEN false ELSE complet\'oLaMisi\'on?($n,p$) $\lor$ algunoComplet\'oLaMisi\'on?($n-1,p$) FI}
 
 \tadAxioma{complet\'oLaMisi\'on?($j,p$)}{cu\'antosLeFaltan($j,p$) $=0$}
-
-\tadAxioma{cu\'antosLeFaltan($j,p$)}{contarNoDominadosHasta($j,$\#casilleros(tablero($p$)),$p$)}
 
 \tadAxioma{contarNoDominadosHasta($j,n,p$)}{\IF $\neg$ dominadoPor($j,n,p$) $\land$ cont($n,$tablero($p$)) = misi\'on($j,p$) THEN suc(contarNoDominadosHasta($j,n-1,p$)) ELSE contarNoDominadosHasta($j,n-1,p$) FI}
 
@@ -307,14 +339,15 @@ cont($c,t$) FI}
 \end{flushright}
 \tadAxioma{maxiFourcade($n,p$)}{\IF jugadoresActivos($p$) $=\{n\} \lor $ complet\'oLaMisi\'on?($n,p$) THEN $n$ ELSE maxiFourcade($n-1,p$) FI}
 
-
 \end{tad}
+
+\pagebreak
 
 \section{Extensiones de otros TADs}
 
-\subsection{TAD \tadNombre{SecuExt} extiende \tadNombre{Secuencia}}
+\subsection{TAD \tadNombre{SecuExt($\alpha$)} extiende \tadNombre{Secuencia($\alpha$)}}
 
-\begin{tad}{\tadNombre{SecuExt}}
+\begin{tad}{\tadNombre{SecuExt($\alpha$)}}
 
 (...)
 
@@ -322,17 +355,19 @@ cont($c,t$) FI}
 
 \tadOperacion{$\argumento [ \argumento ]$}{secuExt($\alpha$),nat}{$\alpha$}{$n < $ long($s$)}
 \tadOperacion{sinRepetidos?}{secuExt($\alpha$)}{bool}{}
+\tadOperacion{posici\'on}{$\alpha$/e,secuExt($\alpha$)/s}{nat}{est\'a?($e,s$)}
 
 \tadAxiomas
 
 \tadAxioma{s[n]}{\IF $n=0$ THEN prim($s$) ELSE fin($s$)[$n-1$] FI}
 \tadAxioma{sinRepetidos?($s$)}{\IF vac\'ia?($s$) THEN true ELSE $\neg$ est\'a?(prim($s$),fin($s$)) $\land$ sinRepetidos?(fin($s$)) FI}
+\tadAxioma{posici\'on($e,s$)}{\IF prim($s$) $=e$ THEN $0$ ELSE suc(posici\'on($e,$fin($s$))) FI}
 
 \end{tad}
 
-\subsection{TAD \tadNombre{MulticonjExt} extiende \tadNombre{Multiconjunto}}
+\subsection{TAD \tadNombre{MulticonjExt($\alpha$)} extiende \tadNombre{Multiconjunto($\alpha$)}}
 
-\begin{tad}{\tadNombre{MulticonjExt}}
+\begin{tad}{\tadNombre{MulticonjExt($\alpha$)}}
 
 (...)
 

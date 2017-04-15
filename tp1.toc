@@ -1,0 +1,10 @@
+\select@language {spanish}
+\contentsline {paragraph}{\textsc {Casillero} es \textsc {Nat}}{1}{section*.2}
+\contentsline {paragraph}{\textsc {Movimiento} es \textsc {Nat}}{1}{section*.3}
+\contentsline {paragraph}{\textsc {Continente} es \textsc {String}}{1}{section*.4}
+\contentsline {paragraph}{\textsc {Jugador} es \textsc {Nat}}{1}{section*.5}
+\contentsline {section}{\numberline {1}TAD \textsc {Tablero}}{1}{section.1}
+\contentsline {section}{\numberline {2}TAD \textsc {Partida}}{4}{section.2}
+\contentsline {section}{\numberline {3}Extensiones de otros TADs}{9}{section.3}
+\contentsline {subsection}{\numberline {3.1}TAD \textsc {SecuExt($\alpha $)} extiende \textsc {Secuencia($\alpha $)}}{9}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}TAD \textsc {MulticonjExt($\alpha $)} extiende \textsc {Multiconjunto($\alpha $)}}{9}{subsection.3.2}
